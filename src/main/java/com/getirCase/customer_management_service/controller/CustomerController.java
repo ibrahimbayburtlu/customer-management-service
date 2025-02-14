@@ -2,6 +2,8 @@ package com.getirCase.customer_management_service.controller;
 
 import com.getirCase.customer_management_service.constants.ApiEndpoints;
 import com.getirCase.customer_management_service.dto.CustomerDTO;
+import com.getirCase.customer_management_service.exception.CustomerNotFoundException;
+import com.getirCase.customer_management_service.exception.InvalidRequestException;
 import com.getirCase.customer_management_service.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -51,7 +54,11 @@ public class CustomerController {
     })
     public ResponseEntity<CustomerDTO> createCustomer(
             @Parameter(description = "Customer data including name and email", required = true)
-            @Valid @RequestBody CustomerDTO customerDTO) {
+            @Valid @RequestBody CustomerDTO customerDTO, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            throw new InvalidRequestException("Invalid customer data");
+        }
 
         logger.info("Creating new customer: {}", customerDTO);
         CustomerDTO createdCustomer = customerService.createCustomer(customerDTO);
