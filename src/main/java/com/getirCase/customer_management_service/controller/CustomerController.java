@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(ApiEndpoints.CUSTOMER_BASE)
 public class CustomerController {
+
     private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
     private final CustomerService customerService;
 
@@ -35,23 +36,21 @@ public class CustomerController {
     public ResponseEntity<CustomerDTO> getCustomer(
             @Parameter(description = "ID of the customer to retrieve", required = true)
             @PathVariable Long id) {
-        logger.info("Fetching customer with ID: {}", id);
+
+        logger.info("Retrieving customer with ID: {}", id);
         CustomerDTO customerDTO = customerService.getCustomer(id);
         return ResponseEntity.ok(customerDTO);
     }
 
     @PostMapping(ApiEndpoints.CREATE_CUSTOMER)
-    @Operation(
-            summary = "Create a new customer with a specific tier",
-            description = "Creates a new customer with the specified tier (Regular, Gold, Platinum). Default is Regular."
-    )
+    @Operation(summary = "Create a new customer", description = "Creates a new customer. Default tier is Regular.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Customer created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<CustomerDTO> createCustomer(
-            @Parameter(description = "Customer data including tier (Regular, Gold, Platinum)", required = true)
+            @Parameter(description = "Customer data including name and email", required = true)
             @Valid @RequestBody CustomerDTO customerDTO) {
 
         logger.info("Creating new customer: {}", customerDTO);
@@ -61,10 +60,7 @@ public class CustomerController {
 
 
     @DeleteMapping(ApiEndpoints.DELETE_CUSTOMER)
-    @Operation(
-            summary = "Delete a customer by ID",
-            description = "Deletes the customer with the specified ID."
-    )
+    @Operation(summary = "Delete a customer by ID", description = "Deletes the customer with the specified ID.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Customer deleted successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid customer ID"),
@@ -81,10 +77,7 @@ public class CustomerController {
     }
 
     @PutMapping(ApiEndpoints.UPDATE_CUSTOMER)
-    @Operation(
-            summary = "Update an existing customer",
-            description = "Updates the customer information for the specified ID."
-    )
+    @Operation(summary = "Update an existing customer", description = "Updates the customer information for the specified ID.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Customer updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request data"),
@@ -102,11 +95,8 @@ public class CustomerController {
         return ResponseEntity.ok(updatedCustomer);
     }
 
-    @PutMapping(ApiEndpoints.UPDATE_TIER)
-    @Operation(
-            summary = "Update customer tier based on order count",
-            description = "Called by Order-Service to update customer tier."
-    )
+    @PatchMapping(ApiEndpoints.UPDATE_TIER)
+    @Operation(summary = "Update customer tier", description = "Called by Order-Service to update customer tier based on order count.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Customer tier updated successfully"),
             @ApiResponse(responseCode = "404", description = "Customer not found"),
@@ -118,9 +108,8 @@ public class CustomerController {
             @Parameter(description = "New Order Count", required = true)
             @RequestParam int orderCount) {
 
-        logger.info("Updating customer tier for customer ID: {}", id);
+        logger.info("Updating customer tier for customer ID: {} based on {} orders", id, orderCount);
         CustomerDTO updatedCustomer = customerService.updateCustomerTier(id, orderCount);
         return ResponseEntity.ok(updatedCustomer);
     }
-
 }

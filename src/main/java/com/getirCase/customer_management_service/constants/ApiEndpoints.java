@@ -7,9 +7,8 @@ public final class ApiEndpoints {
 
     public static final String CUSTOMER_BASE = "/api/customers";
     public static final String GET_CUSTOMER = "/{id}";
-    public static final String CREATE_CUSTOMER = "/create";
-    public static final String DELETE_CUSTOMER = "/delete/{id}";
-    public static final String UPDATE_CUSTOMER = "/update/{id}";
-    public static final String UPDATE_TIER = "/update/tier/{id}";
-
+    public static final String CREATE_CUSTOMER = "";
+    public static final String DELETE_CUSTOMER = "/{id}";
+    public static final String UPDATE_CUSTOMER = "/{id}";
+    public static final String UPDATE_TIER = "/{id}/tier";
 }
