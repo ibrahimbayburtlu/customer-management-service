@@ -2,11 +2,16 @@ package com.getirCase.customer_management_service.entity;
 
 import com.getirCase.customer_management_service.enums.CustomerTier;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "customer")
 public class Customer {
     @Id

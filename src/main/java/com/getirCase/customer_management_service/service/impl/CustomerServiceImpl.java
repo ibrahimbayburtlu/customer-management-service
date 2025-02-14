@@ -9,7 +9,9 @@ import com.getirCase.customer_management_service.repository.CustomerRepository;
 import com.getirCase.customer_management_service.service.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -104,23 +106,26 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerDTO updateCustomerTier(Long customerId, int orderCount) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + customerId));
+        try {
+            Customer customer = customerRepository.findById(customerId)
+                    .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + customerId));
 
-        customer.setOrderCount(orderCount);
+            customer.setOrderCount(orderCount);
 
-        if (orderCount >= 20) {
-            customer.setTier(CustomerTier.PLATINUM);
-        } else if (orderCount >= 10) {
-            customer.setTier(CustomerTier.GOLD);
-        } else {
-            customer.setTier(CustomerTier.REGULAR);
+            if (orderCount >= 20) {
+                customer.setTier(CustomerTier.PLATINUM);
+            } else if (orderCount >= 10) {
+                customer.setTier(CustomerTier.GOLD);
+            } else {
+                customer.setTier(CustomerTier.REGULAR);
+            }
+
+            customerRepository.save(customer);
+            logger.info("Updated customer {} to tier {}", customerId, customer.getTier());
+            return customerMapper.toDTO(customer);
+        } catch (Exception e) {
+            logger.error("Error updating customer tier for ID {}: {}", customerId, e.getMessage());
+            throw new RuntimeException("Unexpected error occurred while updating customer tier", e);
         }
-
-        customerRepository.save(customer);
-        logger.info("Updated customer {} to tier {}", customerId, customer.getTier());
-        return customerMapper.toDTO(customer);
     }
-
-
 }
