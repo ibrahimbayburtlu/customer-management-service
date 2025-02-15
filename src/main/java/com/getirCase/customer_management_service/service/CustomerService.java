@@ -1,12 +1,13 @@
 package com.getirCase.customer_management_service.service;
 
-import com.getirCase.customer_management_service.dto.CustomerDTO;
+import com.getirCase.customer_management_service.model.CustomerRequest;
+import com.getirCase.customer_management_service.model.CustomerResponse;
 import jakarta.validation.Valid;
 
 public interface CustomerService {
-    CustomerDTO getCustomer(Long customerId);
-    CustomerDTO createCustomer(@Valid CustomerDTO customerDTO);
+    CustomerResponse getCustomer(Long customerId);
+    CustomerResponse createCustomer(@Valid CustomerRequest request);
     void deleteCustomer(Long customerId);
-    CustomerDTO updateCustomer(Long customerId,CustomerDTO customerDTO);
-    CustomerDTO updateCustomerTier(Long customerId, int orderCount);
+    CustomerResponse updateCustomer(Long customerId,CustomerRequest request);
+    CustomerResponse updateCustomerTier(Long customerId, int orderCount);
 }

@@ -1,4 +1,4 @@
-package com.getirCase.customer_management_service.dto;
+package com.getirCase.customer_management_service.model;
 
 import com.getirCase.customer_management_service.enums.CustomerTier;
 import jakarta.validation.constraints.Email;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerDTO {
+public class CustomerRequest {
 
     @NotBlank(message = "Name is required")
     private String name;

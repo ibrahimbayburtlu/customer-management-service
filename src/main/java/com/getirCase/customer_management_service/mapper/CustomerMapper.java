@@ -1,6 +1,7 @@
 package com.getirCase.customer_management_service.mapper;
 
-import com.getirCase.customer_management_service.dto.CustomerDTO;
+import com.getirCase.customer_management_service.model.CustomerRequest;
+import com.getirCase.customer_management_service.model.CustomerResponse;
 import com.getirCase.customer_management_service.entity.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -9,6 +10,6 @@ import org.mapstruct.factory.Mappers;
 public interface CustomerMapper {
     CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class); // Manuel singleton
 
-    CustomerDTO toDTO(Customer customer);
-    Customer toEntity(CustomerDTO customerDTO);
+    Customer toEntity(CustomerRequest request);
+    CustomerResponse toResponse(Customer customer);
 }
