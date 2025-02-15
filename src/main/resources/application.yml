@@ -44,6 +44,6 @@ mapstruct:
 
 logging:
   level:
-    org.apache.kafka: WARN
-    kafka: WARN
-    org.springframework.kafka: WARN
+    org.apache.kafka: off
+    kafka: off
+    org.springframework.kafka: off

@@ -4,6 +4,7 @@ import com.getirCase.customer_management_service.constants.ApiEndpoints;
 import com.getirCase.customer_management_service.model.CustomerRequest;
 import com.getirCase.customer_management_service.model.CustomerResponse;
 import com.getirCase.customer_management_service.exception.InvalidRequestException;
+import com.getirCase.customer_management_service.model.OrderCountRequest;
 import com.getirCase.customer_management_service.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping(ApiEndpoints.CUSTOMER_BASE)
@@ -119,4 +122,24 @@ public class CustomerController {
         CustomerResponse response = customerService.updateCustomerTier(id, orderCount);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping(ApiEndpoints.UPDATE_ORDER_COUNT)
+    @Operation(summary = "Update customer order count", description = "Updates the order count for a customer.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Order count updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Customer not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<CustomerResponse> updateOrderCount(
+            @Parameter(description = "Customer ID", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "New Order Count", required = true)
+            @RequestBody OrderCountRequest request) {
+
+        logger.info("Updating order count for customer ID: {} to {}", id, request.getNewOrderCount());
+
+        CustomerResponse response = customerService.updateOrderCount(id, request.getNewOrderCount());
+        return ResponseEntity.ok(response);
+    }
+
 }
