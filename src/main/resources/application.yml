@@ -23,15 +23,27 @@ spring:
     consumer:
       group-id: customer-service-group
       auto-offset-reset: earliest
+      enable-auto-commit: true
+      properties:
+        spring.json.trusted.packages: "*"
+    producer:
+      retries: 3
+      batch-size: 16384
+      buffer-memory: 33554432
+      properties:
+        spring.json.trusted.packages: "*"
+    listener:
+      type: batch
+      ack-mode: batch
+      poll-timeout: 3000
     topics:
-      customer-tier-update: customer-tier-update
+      customer-tier-update: customer.events
 
 mapstruct:
   verbose: true
 
 logging:
   level:
-    org.apache.kafka: ERROR
-    kafka: ERROR
-    org.springframework.kafka: ERROR
-
+    org.apache.kafka: WARN
+    kafka: WARN
+    org.springframework.kafka: WARN
