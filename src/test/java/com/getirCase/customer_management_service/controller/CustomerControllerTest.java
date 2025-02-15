@@ -2,9 +2,10 @@ package com.getirCase.customer_management_service.controller;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.getirCase.customer_management_service.dto.CustomerDTO;
 import com.getirCase.customer_management_service.enums.CustomerTier;
 import com.getirCase.customer_management_service.exception.CustomerNotFoundException;
+import com.getirCase.customer_management_service.model.CustomerRequest;
+import com.getirCase.customer_management_service.model.CustomerResponse;
 import com.getirCase.customer_management_service.service.CustomerService;
 import com.getirCase.customer_management_service.constants.ApiEndpoints;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +35,8 @@ class CustomerControllerTest {
     @InjectMocks
     private CustomerController customerController;
 
-    private CustomerDTO customerDTO;
+    private CustomerRequest request;
+    private CustomerResponse response;
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -48,7 +50,11 @@ class CustomerControllerTest {
 
         OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-        customerDTO = new CustomerDTO(
+        request = new CustomerRequest(
+                "ibrahim", "bayburtlu", "ibrahimbayburtlu5@gmail.com", "5061225291",
+                "merkez mahallesi kavaklı sokak", CustomerTier.REGULAR
+        );
+        response = new CustomerResponse(
                 "ibrahim", "bayburtlu", "ibrahimbayburtlu5@gmail.com", "5061225291",
                 "merkez mahallesi kavaklı sokak", CustomerTier.REGULAR
         );
@@ -58,15 +64,15 @@ class CustomerControllerTest {
     @Test
     @DisplayName("Get Customer")
     void testGetCustomer() throws Exception {
-        when(customerService.getCustomer(1L)).thenReturn(customerDTO);
+        when(customerService.getCustomer(1L)).thenReturn(response);
         mockMvc.perform(get(ApiEndpoints.CUSTOMER_BASE + ApiEndpoints.GET_CUSTOMER, 1L))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(customerDTO.getName()))
-                .andExpect(jsonPath("$.surname").value(customerDTO.getSurname()))
-                .andExpect(jsonPath("$.email").value(customerDTO.getEmail()))
-                .andExpect(jsonPath("$.phoneNumber").value(customerDTO.getPhoneNumber()))
-                .andExpect(jsonPath("$.address").value(customerDTO.getAddress()))
-                .andExpect(jsonPath("$.tier").value(customerDTO.getTier().toString()));
+                .andExpect(jsonPath("$.name").value(request.getName()))
+                .andExpect(jsonPath("$.surname").value(request.getSurname()))
+                .andExpect(jsonPath("$.email").value(request.getEmail()))
+                .andExpect(jsonPath("$.phoneNumber").value(request.getPhoneNumber()))
+                .andExpect(jsonPath("$.address").value(request.getAddress()))
+                .andExpect(jsonPath("$.tier").value(request.getTier().toString()));
     }
 
     @Test
@@ -83,28 +89,28 @@ class CustomerControllerTest {
     @DisplayName("Create Customer")
     void testCreateCustomer() throws Exception {
 
-        when(customerService.createCustomer(any(CustomerDTO.class))).thenReturn(customerDTO);
+        when(customerService.createCustomer(any(CustomerRequest.class))).thenReturn(response);
 
 
         mockMvc.perform(post(ApiEndpoints.CUSTOMER_BASE + ApiEndpoints.CREATE_CUSTOMER)
                         .contentType("application/json")
                         .content("{\"name\":\"ibrahim\",\"surname\":\"bayburtlu\",\"email\":\"ibrahimbayburtlu5@gmail.com\",\"phoneNumber\":\"5061225291\",\"address\":\"merkez mahallesi kavaklı sokak\"}"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value(customerDTO.getName()))
-                .andExpect(jsonPath("$.surname").value(customerDTO.getSurname()))
-                .andExpect(jsonPath("$.email").value(customerDTO.getEmail()))
-                .andExpect(jsonPath("$.phoneNumber").value(customerDTO.getPhoneNumber()))
-                .andExpect(jsonPath("$.address").value(customerDTO.getAddress()))
-                .andExpect(jsonPath("$.tier").value(customerDTO.getTier().toString()));
+                .andExpect(jsonPath("$.name").value(request.getName()))
+                .andExpect(jsonPath("$.surname").value(request.getSurname()))
+                .andExpect(jsonPath("$.email").value(request.getEmail()))
+                .andExpect(jsonPath("$.phoneNumber").value(request.getPhoneNumber()))
+                .andExpect(jsonPath("$.address").value(request.getAddress()))
+                .andExpect(jsonPath("$.tier").value(request.getTier().toString()));
     }
 
     @Test
     @DisplayName("Create Customer Bad Request")
     void testCreateCustomerBadRequest() throws Exception {
-        customerDTO = new CustomerDTO( "", "", "", "",
+        request = new CustomerRequest( "", "", "", "",
                 "merkez mahallesi kavaklı sokak", CustomerTier.REGULAR);
 
-        String invalidCustomerJson = OBJECT_MAPPER.writeValueAsString(customerDTO);
+        String invalidCustomerJson = OBJECT_MAPPER.writeValueAsString(request);
 
         mockMvc.perform(post(ApiEndpoints.CUSTOMER_BASE + ApiEndpoints.CREATE_CUSTOMER)
                         .contentType("application/json")
@@ -147,30 +153,30 @@ class CustomerControllerTest {
     @DisplayName("Update Customer Success")
     void testUpdateCustomerSuccess() throws Exception {
         Long customerId = 1L;
-        when(customerService.updateCustomer(eq(customerId), any(CustomerDTO.class))).thenReturn(customerDTO);
+        when(customerService.updateCustomer(eq(customerId), any(CustomerRequest.class))).thenReturn(response);
 
         mockMvc.perform(put(ApiEndpoints.CUSTOMER_BASE + ApiEndpoints.UPDATE_CUSTOMER, customerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(OBJECT_MAPPER.writeValueAsString(customerDTO)))
+                        .content(OBJECT_MAPPER.writeValueAsString(request)))
                 .andExpect(status().isOk()) // 200
-                .andExpect(jsonPath("$.name").value(customerDTO.getName()))
-                .andExpect(jsonPath("$.surname").value(customerDTO.getSurname()))
-                .andExpect(jsonPath("$.email").value(customerDTO.getEmail()))
-                .andExpect(jsonPath("$.phoneNumber").value(customerDTO.getPhoneNumber()))
-                .andExpect(jsonPath("$.address").value(customerDTO.getAddress()))
-                .andExpect(jsonPath("$.tier").value(customerDTO.getTier().toString()));
+                .andExpect(jsonPath("$.name").value(response.getName()))
+                .andExpect(jsonPath("$.surname").value(response.getSurname()))
+                .andExpect(jsonPath("$.email").value(response.getEmail()))
+                .andExpect(jsonPath("$.phoneNumber").value(response.getPhoneNumber()))
+                .andExpect(jsonPath("$.address").value(response.getAddress()))
+                .andExpect(jsonPath("$.tier").value(response.getTier().toString()));
     }
 
     @Test
     @DisplayName("Update Customer Not Found")
     void testUpdateCustomerNotFound() throws Exception {
         Long customerId = 99L;
-        when(customerService.updateCustomer(eq(customerId), any(CustomerDTO.class)))
+        when(customerService.updateCustomer(eq(customerId), any(CustomerRequest.class)))
                 .thenThrow(new CustomerNotFoundException("Customer not found"));
 
         mockMvc.perform(put(ApiEndpoints.CUSTOMER_BASE + ApiEndpoints.UPDATE_CUSTOMER, customerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(OBJECT_MAPPER.writeValueAsString(customerDTO)))
+                        .content(OBJECT_MAPPER.writeValueAsString(response)))
                 .andExpect(status().isNotFound());
     }
 
@@ -180,18 +186,18 @@ class CustomerControllerTest {
         Long customerId = 1L;
         int orderCount = 10;
 
-        when(customerService.updateCustomerTier(eq(customerId), eq(orderCount))).thenReturn(customerDTO);
+        when(customerService.updateCustomerTier(eq(customerId), eq(orderCount))).thenReturn(response);
 
         mockMvc.perform(patch(ApiEndpoints.CUSTOMER_BASE + ApiEndpoints.UPDATE_TIER, customerId)
                         .param("orderCount", String.valueOf(orderCount))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(customerDTO.getName()))
-                .andExpect(jsonPath("$.surname").value(customerDTO.getSurname()))
-                .andExpect(jsonPath("$.email").value(customerDTO.getEmail()))
-                .andExpect(jsonPath("$.phoneNumber").value(customerDTO.getPhoneNumber()))
-                .andExpect(jsonPath("$.address").value(customerDTO.getAddress()))
-                .andExpect(jsonPath("$.tier").value(customerDTO.getTier().toString()));
+                .andExpect(jsonPath("$.name").value(request.getName()))
+                .andExpect(jsonPath("$.surname").value(request.getSurname()))
+                .andExpect(jsonPath("$.email").value(request.getEmail()))
+                .andExpect(jsonPath("$.phoneNumber").value(request.getPhoneNumber()))
+                .andExpect(jsonPath("$.address").value(request.getAddress()))
+                .andExpect(jsonPath("$.tier").value(request.getTier().toString()));
     }
 
     @Test

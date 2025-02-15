@@ -1,6 +1,7 @@
 package com.getirCase.customer_management_service.service.impl;
 
-import com.getirCase.customer_management_service.dto.CustomerDTO;
+import com.getirCase.customer_management_service.model.CustomerRequest;
+import com.getirCase.customer_management_service.model.CustomerResponse;
 import com.getirCase.customer_management_service.entity.Customer;
 import com.getirCase.customer_management_service.enums.CustomerTier;
 import com.getirCase.customer_management_service.exception.CustomerNotFoundException;
@@ -9,9 +10,7 @@ import com.getirCase.customer_management_service.repository.CustomerRepository;
 import com.getirCase.customer_management_service.service.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -24,7 +23,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDTO getCustomer(Long customerId) {
+    public CustomerResponse getCustomer(Long customerId) {
         if (customerId == null) {
             logger.error("Customer ID is null");
             throw new IllegalArgumentException("Customer ID cannot be null");
@@ -37,16 +36,16 @@ public class CustomerServiceImpl implements CustomerService {
                 });
 
         logger.info("Customer found: {}", customer);
-        return customerMapper.toDTO(customer);
+        return customerMapper.toResponse(customer);
     }
 
     @Override
-    public CustomerDTO createCustomer(CustomerDTO customerDTO) {
-        if (customerDTO == null) {
+    public CustomerResponse createCustomer(CustomerRequest request) {
+        if (request == null) {
             throw new IllegalArgumentException("Customer data cannot be null");
         }
 
-        Customer customer = customerMapper.toEntity(customerDTO);
+        Customer customer = customerMapper.toEntity(request);
         if (customer.getTier() == null) {
             customer.setTier(CustomerTier.REGULAR);
         }
@@ -54,7 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer savedCustomer = customerRepository.save(customer);
 
         logger.info("Customer created with ID: {} and Tier: {}", savedCustomer.getId(), savedCustomer.getTier());
-        return customerMapper.toDTO(savedCustomer);
+        return customerMapper.toResponse(savedCustomer);
     }
 
     @Override
@@ -76,13 +75,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDTO updateCustomer(Long customerId, CustomerDTO customerDTO) {
+    public CustomerResponse updateCustomer(Long customerId, CustomerRequest request) {
         if (customerId == null) {
             logger.error("Customer ID is null");
             throw new IllegalArgumentException("Customer ID cannot be null");
         }
 
-        if (customerDTO == null) {
+        if (request == null) {
             logger.error("Customer data is null");
             throw new IllegalArgumentException("Customer data cannot be null");
         }
@@ -93,19 +92,19 @@ public class CustomerServiceImpl implements CustomerService {
                     return new CustomerNotFoundException("Customer not found with id: " + customerId);
                 });
 
-        existingCustomer.setName(customerDTO.getName());
-        existingCustomer.setSurname(customerDTO.getSurname());
-        existingCustomer.setEmail(customerDTO.getEmail());
-        existingCustomer.setPhoneNumber(customerDTO.getPhoneNumber());
+        existingCustomer.setName(request.getName());
+        existingCustomer.setSurname(request.getSurname());
+        existingCustomer.setEmail(request.getEmail());
+        existingCustomer.setPhoneNumber(request.getPhoneNumber());
 
         Customer savedCustomer = customerRepository.save(existingCustomer);
 
         logger.info("Customer with ID {} has been updated", customerId);
-        return customerMapper.toDTO(savedCustomer);
+        return customerMapper.toResponse(savedCustomer);
     }
 
     @Override
-    public CustomerDTO updateCustomerTier(Long customerId, int orderCount) {
+    public CustomerResponse updateCustomerTier(Long customerId, int orderCount) {
         try {
             Customer customer = customerRepository.findById(customerId)
                     .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + customerId));
@@ -122,7 +121,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             customerRepository.save(customer);
             logger.info("Updated customer {} to tier {}", customerId, customer.getTier());
-            return customerMapper.toDTO(customer);
+            return customerMapper.toResponse(customer);
         } catch (Exception e) {
             logger.error("Error updating customer tier for ID {}: {}", customerId, e.getMessage());
             throw new RuntimeException("Unexpected error occurred while updating customer tier", e);

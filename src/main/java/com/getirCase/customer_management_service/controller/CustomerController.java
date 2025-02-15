@@ -1,8 +1,8 @@
 package com.getirCase.customer_management_service.controller;
 
 import com.getirCase.customer_management_service.constants.ApiEndpoints;
-import com.getirCase.customer_management_service.dto.CustomerDTO;
-import com.getirCase.customer_management_service.exception.CustomerNotFoundException;
+import com.getirCase.customer_management_service.model.CustomerRequest;
+import com.getirCase.customer_management_service.model.CustomerResponse;
 import com.getirCase.customer_management_service.exception.InvalidRequestException;
 import com.getirCase.customer_management_service.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,13 +36,13 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "Customer not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<CustomerDTO> getCustomer(
+    public ResponseEntity<CustomerResponse> getCustomer(
             @Parameter(description = "ID of the customer to retrieve", required = true)
             @PathVariable Long id) {
 
         logger.info("Retrieving customer with ID: {}", id);
-        CustomerDTO customerDTO = customerService.getCustomer(id);
-        return ResponseEntity.ok(customerDTO);
+        CustomerResponse response = customerService.getCustomer(id);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(ApiEndpoints.CREATE_CUSTOMER)
@@ -52,17 +52,17 @@ public class CustomerController {
             @ApiResponse(responseCode = "400", description = "Invalid request data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<CustomerDTO> createCustomer(
+    public ResponseEntity<CustomerResponse> createCustomer(
             @Parameter(description = "Customer data including name and email", required = true)
-            @Valid @RequestBody CustomerDTO customerDTO, BindingResult bindingResult) {
+            @Valid @RequestBody CustomerRequest request, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             throw new InvalidRequestException("Invalid customer data");
         }
 
-        logger.info("Creating new customer: {}", customerDTO);
-        CustomerDTO createdCustomer = customerService.createCustomer(customerDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCustomer);
+        logger.info("Creating new customer: {}", request);
+        CustomerResponse response = customerService.createCustomer(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 
@@ -91,15 +91,15 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "Customer not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<CustomerDTO> updateCustomer(
+    public ResponseEntity<CustomerResponse> updateCustomer(
             @Parameter(description = "ID of the customer to update", required = true)
             @PathVariable Long id,
             @Parameter(description = "Updated customer data", required = true)
-            @Valid @RequestBody CustomerDTO customerDTO) {
+            @Valid @RequestBody CustomerRequest request) {
 
         logger.info("Updating customer with ID: {}", id);
-        CustomerDTO updatedCustomer = customerService.updateCustomer(id, customerDTO);
-        return ResponseEntity.ok(updatedCustomer);
+        CustomerResponse response = customerService.updateCustomer(id, request);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping(ApiEndpoints.UPDATE_TIER)
@@ -109,14 +109,14 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "Customer not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<CustomerDTO> updateCustomerTier(
+    public ResponseEntity<CustomerResponse> updateCustomerTier(
             @Parameter(description = "Customer ID", required = true)
             @PathVariable Long id,
             @Parameter(description = "New Order Count", required = true)
             @RequestParam int orderCount) {
 
         logger.info("Updating customer tier for customer ID: {} based on {} orders", id, orderCount);
-        CustomerDTO updatedCustomer = customerService.updateCustomerTier(id, orderCount);
-        return ResponseEntity.ok(updatedCustomer);
+        CustomerResponse response = customerService.updateCustomerTier(id, orderCount);
+        return ResponseEntity.ok(response);
     }
 }
