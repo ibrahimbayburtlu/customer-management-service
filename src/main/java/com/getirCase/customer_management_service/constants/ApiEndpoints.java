@@ -11,4 +11,5 @@ public final class ApiEndpoints {
     public static final String DELETE_CUSTOMER = "/{id}";
     public static final String UPDATE_CUSTOMER = "/{id}";
     public static final String UPDATE_TIER = "/{id}/tier";
+    public static final String UPDATE_ORDER_COUNT = "/{id}/count";
 }

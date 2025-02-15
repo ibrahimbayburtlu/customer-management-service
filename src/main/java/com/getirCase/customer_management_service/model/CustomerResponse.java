@@ -4,10 +4,12 @@ import com.getirCase.customer_management_service.enums.CustomerTier;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerResponse {
@@ -29,4 +31,7 @@ public class CustomerResponse {
     private String address;
 
     private CustomerTier tier = CustomerTier.REGULAR;
+
+    @NotBlank
+    private int orderCount;
 }

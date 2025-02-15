@@ -111,14 +111,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             customer.setOrderCount(orderCount);
 
-            if (orderCount >= 20) {
-                customer.setTier(CustomerTier.PLATINUM);
-            } else if (orderCount >= 10) {
-                customer.setTier(CustomerTier.GOLD);
-            } else {
-                customer.setTier(CustomerTier.REGULAR);
-            }
-
+            customer.setTier(determineCustomerTier(orderCount));
             customerRepository.save(customer);
             logger.info("Updated customer {} to tier {}", customerId, customer.getTier());
             return customerMapper.toResponse(customer);
@@ -127,4 +120,42 @@ public class CustomerServiceImpl implements CustomerService {
             throw new RuntimeException("Unexpected error occurred while updating customer tier", e);
         }
     }
+
+    @Override
+    public CustomerResponse updateOrderCount(Long customerId, int orderCount) {
+
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer with ID " + customerId + " not found"));
+
+        int customerOrderCount = customer.getOrderCount();
+
+        customer.setOrderCount(customerOrderCount + orderCount);
+
+        CustomerTier tier = determineCustomerTier(customer.getOrderCount());
+        customer.setTier(tier);
+
+        logger.info("update_order_count {} to order count {}", customerId, orderCount);
+        customerRepository.save(customer);
+
+        return CustomerResponse.builder()
+                .name(customer.getName())
+                .surname(customer.getSurname())
+                .email(customer.getEmail())
+                .phoneNumber(customer.getPhoneNumber())
+                .address(customer.getAddress())
+                .orderCount(customer.getOrderCount())
+                .tier(tier)
+                .build();
+    }
+
+    private CustomerTier determineCustomerTier(int orderCount) {
+        if (orderCount >= 20) {
+            return CustomerTier.PLATINUM;
+        } else if (orderCount >= 10) {
+            return CustomerTier.GOLD;
+        } else {
+            return CustomerTier.REGULAR;
+        }
+    }
+
 }
