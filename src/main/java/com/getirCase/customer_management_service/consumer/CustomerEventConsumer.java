@@ -40,12 +40,8 @@ public class CustomerEventConsumer {
                 case "CUSTOMER_ORDER_PLACED":
                     eventHandler.handleCustomerOrderPlaced(event);
                     break;
-                case "CUSTOMER-TIER-UPDATED":
+                case "CUSTOMER_TIER_UPDATED_EVENT":
                     eventHandler.handleCustomerTierUpdated(event);
-                    break;
-
-                case "CUSTOMER-ORDER-CREATED":
-                    eventHandler.handleCustomerOrderCreated(event);
                     break;
                 default:
                     log.warn("Unknown event type received: {}", eventType);
