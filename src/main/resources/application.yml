@@ -42,8 +42,25 @@ spring:
 mapstruct:
   verbose: true
 
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000   # 5 saniye bağlantı süresi
+        readTimeout: 5000      # 5 saniye yanıt bekleme süresi
+        loggerLevel: none      # Feign log seviyesini kapat
+
+server:
+  port: 8080
+
 logging:
   level:
-    org.apache.kafka: off
-    kafka: off
-    org.springframework.kafka: off
+    root: INFO
+    org.apache.kafka: OFF
+    kafka: OFF
+    org.springframework.kafka: OFF
+    org.apache.kafka.clients.consumer: OFF
+    org.apache.kafka.clients.producer: OFF
+    org.apache.kafka.clients.admin: OFF
+    org.apache.kafka.clients: OFF
+    org.springframework.boot.autoconfigure.kafka: OFF
