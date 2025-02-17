@@ -15,23 +15,13 @@ public class CustomerEventHandler {
         this.customerService = customerService;
     }
 
-    public void handleCustomerCreated(CustomerEvent event) {
+    public void handleCustomerOrderCreated(CustomerEvent event) {
         log.info("Processing CUSTOMER_CREATED event for customer ID: {}", event.getCustomerId());
-        // Burada müşteri oluşturma işlemleri yapılır
-    }
-
-    public void handleCustomerUpdated(CustomerEvent event) {
-        log.info("Processing CUSTOMER_UPDATED event for customer ID: {}", event.getCustomerId());
-        // Burada müşteri güncelleme işlemleri yapılır
+        customerService.createOrder(event.getCustomerId());
     }
 
     public void handleCustomerTierUpdated(CustomerEvent event) {
         log.info("Processing CUSTOMER_TIER_UPDATED event for customer ID: {}", event.getCustomerId());
         customerService.updateCustomerTier(event.getCustomerId(), event.getOrderCount());
-    }
-
-    public void handleCustomerOrderPlaced(CustomerEvent event) {
-        log.info("Processing CUSTOMER_ORDER_PLACED event for customer ID: {}", event.getCustomerId());
-        // Burada sipariş işlemleri yapılır
     }
 }

@@ -148,6 +148,26 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
     }
 
+    @Override
+    public CustomerResponse createOrder(Long customerId) {
+        if (customerId == null) {
+            logger.error("Customer ID is null");
+            throw new IllegalArgumentException("Customer ID cannot be null");
+        }
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> {
+                    logger.warn("Customer not found with ID: {}", customerId);
+                    return new CustomerNotFoundException("Customer not found with id: " + customerId);
+                });
+
+        int orderCount = customer.getOrderCount() + 1;
+        customer.setOrderCount(orderCount);
+        customer.setTier(determineCustomerTier(orderCount));
+        customerRepository.save(customer);
+        logger.info("Order created for customer {}", customerId);
+        return customerMapper.toResponse(customer);
+    }
+
     private CustomerTier determineCustomerTier(int orderCount) {
         if (orderCount >= 20) {
             return CustomerTier.PLATINUM;
