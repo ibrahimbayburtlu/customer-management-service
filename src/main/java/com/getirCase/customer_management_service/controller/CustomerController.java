@@ -18,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-
 @RestController
 @RequestMapping(ApiEndpoints.CUSTOMER_BASE)
 public class CustomerController {
