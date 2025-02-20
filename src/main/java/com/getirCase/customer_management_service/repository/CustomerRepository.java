@@ -11,9 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE Customer c SET c.isActive = :isActive WHERE c.id = :customerId")
-    void updateIsActive(@Param("customerId") Long customerId, @Param("isActive") boolean isActive);
+  @Modifying
+  @Transactional
+  @Query("UPDATE Customer c SET c.isActive = :isActive WHERE c.id = :customerId")
+  void updateIsActive(@Param("customerId") Long customerId, @Param("isActive") boolean isActive);
 }
