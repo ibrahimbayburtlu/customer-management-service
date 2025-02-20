@@ -18,15 +18,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping(ApiEndpoints.CUSTOMER_BASE)
 public class CustomerController {
 
   private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
-  private final CustomerService customerService;
+  private CustomerService customerService;
 
   public CustomerController(CustomerService customerService) {
-    this.customerService = customerService;
+    this.customerService = Objects.requireNonNull(customerService, "CustomerService cannot be null");
   }
 
   @GetMapping(ApiEndpoints.GET_CUSTOMER)
