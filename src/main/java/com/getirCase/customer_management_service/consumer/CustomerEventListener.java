@@ -5,25 +5,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.getirCase.customer_management_service.enums.KafkaEventType;
 import com.getirCase.customer_management_service.model.event.CustomerEvent;
 import com.getirCase.customer_management_service.service.handler.CustomerEventHandler;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class CustomerEventListener {
 
   private final ObjectMapper objectMapper;
   private final CustomerEventHandler eventHandler;
 
+  public CustomerEventListener(ObjectMapper objectMapper, CustomerEventHandler eventHandler) {
+    this.objectMapper = objectMapper.copy(); // Defensive copy
+    this.eventHandler = eventHandler;
+  }
+
   @KafkaListener(topics = "customer.events", groupId = "customer-service-group")
   public void consumeCustomerEvents(String message) {
     try {
-
       JsonNode jsonNode = objectMapper.readTree(message);
-
       String eventTypeStr = jsonNode.get("eventType").asText();
       KafkaEventType eventType = KafkaEventType.valueOf(eventTypeStr);
 
