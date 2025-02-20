@@ -5,6 +5,8 @@ import com.getirCase.customer_management_service.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 public class CustomerEventHandler {
@@ -12,7 +14,7 @@ public class CustomerEventHandler {
   private final CustomerService customerService;
 
   public CustomerEventHandler(CustomerService customerService) {
-    this.customerService = customerService;
+    this.customerService = Objects.requireNonNull(customerService, "CustomerService cannot be null");
   }
 
   public void handleCustomerOrderCreated(CustomerEvent event) {
