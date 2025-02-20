@@ -25,8 +25,11 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: 🔍 Maven ile Bağımlılıkları Yükle
+      - name: 🔍 Bağımlılıkları Zorla Yükle
+        run: mvn dependency:resolve
+
+      - name: 🏗️ Projeyi Derle ve Paketle (Testleri Atla)
         run: mvn clean install -DskipTests
 
-      - name: ✅ Testleri Çalıştır
-        run: mvn test
+      - name: 🛠️ Testleri Çalıştırırken Debug Modunu Aç
+        run: mvn test -X
