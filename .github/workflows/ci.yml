@@ -1,0 +1,32 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Kodu Checkout Et
+        uses: actions/checkout@v3
+
+      - name: ☕ Java 17 Kurulumu
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: 🔍 Maven ile Bağımlılıkları Yükle
+        run: mvn clean install -DskipTests
+
+      - name: ✅ Testleri Çalıştır
+        run: mvn test
