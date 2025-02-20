@@ -56,7 +56,7 @@ class CustomerControllerTest {
         );
         response = new CustomerResponse(
                 "ibrahim", "bayburtlu", "ibrahimbayburtlu5@gmail.com", "5061225291",
-                "merkez mahallesi kavaklı sokak", CustomerTier.REGULAR
+                "merkez mahallesi kavaklı sokak", CustomerTier.REGULAR,100
         );
     }
 
